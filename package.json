@@ -1,0 +1,32 @@
+{
+  "name": "codevector-product-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.ts",
+  "scripts": {
+    "start": "node dist/app.js",
+    "dev": "cross-env NODE_ENV=DEVELOPMENT tsx watch app.ts",
+    "prod": "cross-env NODE_ENV=PRODUCTION tsx app.ts",
+    "seed": "tsx scripts/seed.ts",
+    "build": "tsc"
+  },
+  "author": "vinil",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/faker": "^6.6.11",
+    "@types/node": "^26.0.1",
+    "@types/pg": "^8.20.0",
+    "tsx": "^4.22.4",
+    "typescript": "^6.0.3"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "cross-env": "^10.1.0",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "pg": "^8.22.0",
+    "redis": "^6.0.1"
+  }
+}
