@@ -5,9 +5,9 @@
   "main": "app.ts",
   "scripts": {
     "start": "node dist/app.js",
-    "dev": "cross-env NODE_ENV=DEVELOPMENT tsx watch app.ts",
-    "prod": "cross-env NODE_ENV=PRODUCTION tsx app.ts",
-    "seed": "tsx scripts/seed.ts",
+    "dev": "cross-env NODE_ENV=DEVELOPMENT tsx watch app.js",
+    "prod": "cross-env NODE_ENV=PRODUCTION tsx app.js",
+    "seed": "tsx scripts/seed.js",
     "build": "tsc"
   },
   "author": "vinil",
