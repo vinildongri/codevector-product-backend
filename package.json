@@ -2,7 +2,7 @@
   "name": "codevector-product-backend",
   "version": "1.0.0",
   "description": "",
-  "main": "app.ts",
+  "main": "dist/app.js",
   "scripts": {
     "start": "node dist/app.js",
     "dev": "cross-env NODE_ENV=DEVELOPMENT tsx watch app.js",
