@@ -3,7 +3,6 @@ import dotenv from "dotenv";
 import cors from "cors";
 import productRoutes from "./routes/productRoutes.js";
 import { errorHandler } from "./middlewares/errors.js";
-// import { connectRedis } from "./config/redisClient";
 
 dotenv.config();
 

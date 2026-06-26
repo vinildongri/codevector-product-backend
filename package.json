@@ -2,6 +2,7 @@
   "name": "codevector-product-backend",
   "version": "1.0.0",
   "description": "",
+  "type": "module",
   "main": "dist/app.js",
   "scripts": {
     "start": "node dist/app.js",
