@@ -9,7 +9,10 @@ dotenv.config();
 const app = express();
 
 app.use(cors({
-    origin: 'http://localhost:3000', // Allow your frontend
+    origin: [
+        'https://codevector-product-frontend-1aexhm17f-vinil-dongris-projects.vercel.app',
+        'http://localhost:3000'
+    ],
     methods: ['GET', 'POST', 'PATCH', 'DELETE'], // Ensure all methods are allowed
     credentials: true
 }));
