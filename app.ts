@@ -10,6 +10,7 @@ const app = express();
 
 app.use(cors({
     origin: [
+        'https://codevector-product-frontend.vercel.app',
         'https://codevector-product-frontend-1aexhm17f-vinil-dongris-projects.vercel.app',
         'http://localhost:3000'
     ],
