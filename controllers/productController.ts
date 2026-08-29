@@ -6,46 +6,67 @@ import pool from "../config/dbConnect.js";
 // GET All Products => /api/v1/products
 export const getProducts = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
+        // 1. Get Page and Limit from URL queries
+        const page = parseInt(req.query.page as string) || 1;
         const limit = parseInt(req.query.limit as string) || 20;
 
-        // Changed to 400: This is a Bad Request from the client, not an Internal Server Error
         if (limit > 200) {
-            res.status(400).json({
-                success: false,
-                message: "Limit cannot exceed 200 items per request"
-            });
+            res.status(400).json({ success: false, message: "Limit cannot exceed 200 items per request" });
             return;
         }
 
         const category = req.query.category as string | undefined;
-        const cursor = req.query.cursor as string | undefined;
         const search = req.query.search as string | undefined;
 
-        const cursorData = decodeCursor(cursor);
+        // 2. Calculate how many items to skip
+        const offset = (page - 1) * limit;
 
-        // 2. Pass the search term to your database function
-        const rows: ProductRow[] = await fetchProductsFromDB({
-            limit,
-            cursorData,
-            category,
-            search
-        });
+        // 3. Build dynamic SQL for filters
+        let whereClause = "WHERE 1=1";
+        const values: any[] = [];
+        let paramIndex = 1;
 
-        const hasNextPage = rows.length > limit;
-        const items = hasNextPage ? rows.slice(0, limit) : rows;
-
-        let nextCursor: string | null = null;
-        if (hasNextPage && items.length > 0) {
-            const lastItem = items[items.length - 1];
-            nextCursor = encodeCursor(lastItem.created_at, lastItem.id);
+        if (category) {
+            whereClause += ` AND category = $${paramIndex++}`;
+            values.push(category);
         }
 
+        if (search) {
+            // ILIKE is PostgreSQL's case-insensitive search
+            whereClause += ` AND name ILIKE $${paramIndex++}`;
+            values.push(`%${search}%`);
+        }
+
+        // 4. Count total items (Required for the Last Page button)
+        const countQuery = `SELECT COUNT(*) FROM products ${whereClause};`;
+        const countResult = await pool.query(countQuery, values);
+        const totalItems = parseInt(countResult.rows[0].count);
+
+        // 5. Fetch the actual paginated data
+        const dataQuery = `
+            SELECT id as _id, name, category, price, created_at, updated_at 
+            FROM products 
+            ${whereClause} 
+            ORDER BY created_at DESC 
+            LIMIT $${paramIndex++} OFFSET $${paramIndex++};
+        `;
+
+        // Add limit and offset to the end of our values array
+        const dataValues = [...values, limit, offset];
+        const { rows } = await pool.query(dataQuery, dataValues);
+
+        // 6. Calculate total pages
+        const totalPages = Math.ceil(totalItems / limit);
+
+        // 7. Send the response in the exact format Next.js is expecting
         res.status(200).json({
             success: true,
-            data: items,
+            data: rows,
             pagination: {
-                nextCursor,
-                hasNextPage
+                currentPage: page,
+                totalPages,
+                totalItems,
+                limit
             }
         });
     } catch (error) {
